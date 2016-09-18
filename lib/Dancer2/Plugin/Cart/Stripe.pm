@@ -30,7 +30,13 @@ sub get_stripe_plans {
 
   my $ec_cart = $self->app->session->read("ec_cart");
 
-  $ec_cart->{products} = [ map { { ec_sku => $_->id, ec_price => $_->amount, description => $_->name } } @{ $plans->data } ];
+  $ec_cart->{products} = [ map {
+    {
+      ec_sku => $_->id,
+      ec_price => sprintf('%.2f', $_->amount * 0.01),
+      description => $_->name
+    }
+  } @{ $plans->data } ];
 
   $self->app->session->write("ec_cart",$ec_cart);
   return $ec_cart->{products};
